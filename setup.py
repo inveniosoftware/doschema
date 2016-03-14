@@ -58,6 +58,7 @@ setup_requires = [
 ]
 
 install_requires = [
+    'jsonschema>=2.5.1',
 ]
 
 packages = find_packages()
