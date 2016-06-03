@@ -30,6 +30,7 @@ import sphinx.environment
 
 _warn_node_old = sphinx.environment.BuildEnvironment.warn_node
 
+
 def _warn_node(self, msg, *args, **kwargs):
     """Do not warn on external images."""
     if not msg.startswith('nonlocal image URI found:'):
