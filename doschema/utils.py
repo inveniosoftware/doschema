@@ -22,31 +22,16 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
+"""Utils module."""
 
-# Generate this manifest file by running the following commands:
-#
-#  git init
-#  git add -A
-#  pip install -e .[all]
-#  check-manifest -u
+import chardet
 
-# Check manifest will not automatically add these two files:
-include .dockerignore
-include .editorconfig
 
-# added by check_manifest.py
-include *.rst
-include *.sh
-include *.txt
-include docs/requirements.txt
-include *.json
-include LICENSE
-include pytest.ini
-recursive-include docs *.bat
-recursive-include docs *.py
-recursive-include docs *.rst
-recursive-include docs Makefile
-recursive-include examples *.py
-recursive-include examples *.json
-recursive-include tests *.py
-recursive-include tests *.json
+def detect_encoding(byte_file):
+    """Detect encoding of a file with schema."""
+    encoding = chardet.detect(byte_file)['encoding']
+    if encoding in ['UTF-16BE', 'UTF-16LE']:
+        encoding = 'UTF-16'
+    elif encoding in ['UTF-32BE', 'UTF-32LE']:
+        encoding = 'UTF-32'
+    return encoding

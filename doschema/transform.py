@@ -25,6 +25,7 @@
 """Transformation module."""
 
 import copy
+
 import jsonschema
 import six
 

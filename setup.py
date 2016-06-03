@@ -59,6 +59,9 @@ setup_requires = [
 
 install_requires = [
     'jsonschema>=2.5.1',
+    'click>=5.1',
+    'chardet>=2.3.0',
+
 ]
 
 packages = find_packages()
@@ -85,6 +88,9 @@ setup(
     include_package_data=True,
     platforms='any',
     entry_points={
+        'console_scripts': [
+            'doschema = doschema.cli:cli',
+        ],
     },
     extras_require=extras_require,
     install_requires=install_requires,

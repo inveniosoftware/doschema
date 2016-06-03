@@ -23,30 +23,35 @@
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
 
-# Generate this manifest file by running the following commands:
-#
-#  git init
-#  git add -A
-#  pip install -e .[all]
-#  check-manifest -u
+"""In this example, there is no option set, so by default
+"--ignore_index" option is enabled.
+Thus array indexes are ignored and for each array field, all items have to be
+of the same type.
 
-# Check manifest will not automatically add these two files:
-include .dockerignore
-include .editorconfig
+Run this example:
+.. code-block:: console
+    $ cd examples
+    $ python app.py
+The same result could be created with the cli:
+.. code-block:: console
+    $ doschema file1.json file2.json
+"""
 
-# added by check_manifest.py
-include *.rst
-include *.sh
-include *.txt
-include docs/requirements.txt
-include *.json
-include LICENSE
-include pytest.ini
-recursive-include docs *.bat
-recursive-include docs *.py
-recursive-include docs *.rst
-recursive-include docs Makefile
-recursive-include examples *.py
-recursive-include examples *.json
-recursive-include tests *.py
-recursive-include tests *.json
+import json
+from io import open
+
+import doschema.validation
+from doschema.utils import detect_encoding
+
+schemas = [
+    './examples/jsonschema_ignore_index_option.json'
+]
+
+schema_validator = doschema.validation.JSONSchemaValidator()
+for schema in schemas:
+    with open(schema, 'rb') as infile:
+        byte_file = infile.read()
+        encoding = detect_encoding(byte_file)
+        string_file = byte_file.decode(encoding)
+        json_schema = json.loads(string_file)
+        schema_validator.validate(json_schema, schema)

@@ -39,9 +39,15 @@ class JSONSchemaCompatibilityError(DoSchemaError):
 
     def __init__(self, err_msg, schema, prev_schema=None):
         """Constructor."""
-        super(JSONSchemaCompatibilityError, self).__init__(err_msg)
-        """Error message."""
-        self.schema = schema
-        """Index of schema in which field occurs now."""
         self.prev_schema = prev_schema
         """Index of schema in which field has occured before."""
+        self.schema = schema
+        """Index of schema in which field occurs now."""
+        super(JSONSchemaCompatibilityError, self).__init__(err_msg)
+        """Error message."""
+
+
+class EncodingError(DoSchemaError):
+    """Exception raised when file encoding is not compatible."""
+
+    pass

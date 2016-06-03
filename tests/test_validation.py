@@ -193,6 +193,27 @@ def test_type_conflict_with_dependencies_implied():
         obj.validate(v1, 'first')
 
 
+def test_new_field_in_dependencies_passes():
+    """Test that having a new field in dependencies fails."""
+    v1 = {
+        "type": "object",
+
+        "properties": {
+            "billing_address": {"type": "number"}
+        },
+
+        "dependencies": {
+            "credit_card": {
+                "properties": {
+                    "billing_address": {"type": "number"}
+                }
+            }
+        }
+    }
+    obj = JSONSchemaValidator()
+    obj.validate(v1, 'first')
+
+
 def test_dependencies_not_dict():
     """Test the exception raised when dependencies are neither of type list
     nor a dict."""

@@ -47,7 +47,8 @@ class JSONSchemaValidator(object):
         "complex": "number",
         "NoneType": "null",
         "dict": "object",
-        "str": "string"
+        "str": "string",
+        "unicode": "string",
     }
 
     def __init__(self, ignore_index=True, resolver_factory=False):
