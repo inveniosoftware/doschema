@@ -39,6 +39,7 @@ include *.rst
 include *.sh
 include *.txt
 include docs/requirements.txt
+include *.json
 include LICENSE
 include pytest.ini
 recursive-include docs *.bat
@@ -46,3 +47,4 @@ recursive-include docs *.py
 recursive-include docs *.rst
 recursive-include docs Makefile
 recursive-include tests *.py
+recursive-include tests *.json
