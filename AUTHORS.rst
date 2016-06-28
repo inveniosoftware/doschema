@@ -27,4 +27,4 @@ Authors
 
 JSON Schema utility functions and commands.
 
-- CERN <info@invenio-software.org>
+- CERN <info@inveniosoftware.org>
