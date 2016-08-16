@@ -39,6 +39,17 @@ class JSONSchemaValidator(object):
 
     COLLECTION_KEYS = frozenset(['allOf', 'anyOf', 'oneOf'])
 
+    python_to_json_types_map = {
+        "list": "array",
+        "bool": "boolean",
+        "int": "integer",
+        "float": "number",
+        "complex": "number",
+        "NoneType": "null",
+        "dict": "object",
+        "str": "string"
+    }
+
     def __init__(self, ignore_index=True, resolver_factory=False):
         """Constructor.
 
@@ -95,6 +106,7 @@ class JSONSchemaValidator(object):
 
         field = self.fields_types_dict.get(curr_field)
 
+        field_type = curr_schema.get('type')
         if "type" in curr_schema:
             if field is not None and field.field_type == 'null':
                 raise NotImplementedError(
@@ -112,8 +124,6 @@ class JSONSchemaValidator(object):
                     field.schema_index
                 )
 
-            field_type = curr_schema['type']
-
             if field_type == 'null':
                 raise NotImplementedError(
                     'JSON schema null type is not supported.'
@@ -127,40 +137,34 @@ class JSONSchemaValidator(object):
                 )
 
             if curr_schema['type'] == 'array':
-                self._validate_array(
-                    curr_schema['items'],
-                    curr_field + ('items',)
-                )
+                if curr_schema.get('items') is not None:
+                    self._validate_array(
+                        curr_schema['items'],
+                        curr_field + ('items',)
+                    )
         if "enum" in curr_schema:
-            enum_type = self._validate_enum(
+            guessed_enum_type = self._validate_enum(
                 curr_schema['enum'],
                 curr_field
             )
-            if field is not None and field.field_type != enum_type:
-                err_msg = """Conflicting type for field {0} previously found
-                            in schema {1} enum with type {2},
-                            found next with type {3}."""
+            if field_type and field_type != guessed_enum_type:
+                err_msg = "Predicted enum type {0} conflicting with " \
+                            "properties type {1} in schema {2}"
                 raise JSONSchemaCompatibilityError(
                     err_msg.format(
-                        self.make_json_pointer(curr_field),
-                        self.uri,
-                        field.schema_index,
-                        field.field_type
+                        guessed_enum_type,
+                        field_type,
+                        self.uri
                     ),
                     self.uri,
-                    field.schema_index
+                    self.uri
                 )
-            self.fields_types_dict[curr_field] = field = FieldToAdd(
-                schema_index=self.uri,
-                field_tuple=curr_field,
-                field_type=enum_type
-            )
 
         if 'properties' in curr_schema:
             if field and field.field_type != "object":
-                err_msg = """Conflicting type for field {0} previously found
-                            in schema {1} with type {2}, found next in {3}
-                            where "dependencies" imply type "object"."""
+                err_msg = "Conflicting type for field {0} previously found " \
+                            "in schema {1} with type {2}, found next in {3} " \
+                            "where 'properties' imply type 'object'."
                 raise JSONSchemaCompatibilityError(
                     err_msg.format(
                         self.make_json_pointer(curr_field),
@@ -177,16 +181,17 @@ class JSONSchemaValidator(object):
                 field_type='object'
             )
             for prop in curr_schema['properties']:
-                self._validate_root(
-                    curr_schema['properties'][prop],
-                    curr_field + (prop,)
-                )
+                if isinstance(curr_schema['properties'][prop], dict):
+                    self._validate_root(
+                        curr_schema['properties'][prop],
+                        curr_field + (prop,)
+                    )
 
         if "dependencies" in curr_schema:
             if field and field.field_type != "object":
-                err_msg = """Conflicting type for field {0} previously found
-                            in schema {1} with type {2}, found next in {3}
-                            where "dependencies" imply type "object"."""
+                err_msg = "Conflicting type for field {0} previously found " \
+                            "in schema {1} with type {2}, found next in {3} " \
+                            "where 'dependencies' imply type 'object'."
                 raise JSONSchemaCompatibilityError(
                     err_msg.format(
                         self.make_json_pointer(curr_field),
@@ -295,6 +300,14 @@ class JSONSchemaValidator(object):
                 ),
                 self.uri
             )
+        if isinstance(field_value[0], dict) \
+                or isinstance(field_value[0], list):
+            raise NotImplementedError(
+                'JSON schema {0} type inside enum is not supported.'.format(
+                    field_value[0].__class__.__name__
+                )
+            )
+        return self.python_to_json_types_map[field_value[0].__class__.__name__]
 
     @staticmethod
     def make_json_pointer(path):

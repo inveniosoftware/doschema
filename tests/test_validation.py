@@ -165,6 +165,34 @@ def test_root_not_object():
         obj.validate(v1, 'first')
 
 
+def test_type_conflict_with_properties_implied():
+    """Test that having type given in schema and type 'object' implied by
+    properties fails."""
+    v1 = {
+        "type": "string",
+        "properties": {
+            "field_a": {"type": "string"}
+        }
+    }
+    obj = JSONSchemaValidator()
+    with pytest.raises(JSONSchemaCompatibilityError):
+        obj.validate(v1, 'first')
+
+
+def test_type_conflict_with_dependencies_implied():
+    """Test that having type given in schema and type 'object' implied by
+    dependencies fails."""
+    v1 = {
+        "type": "string",
+        "dependencies": {
+            "field_a": {"type": "string"}
+        }
+    }
+    obj = JSONSchemaValidator()
+    with pytest.raises(JSONSchemaCompatibilityError):
+        obj.validate(v1, 'first')
+
+
 def test_dependencies_not_dict():
     """Test the exception raised when dependencies are neither of type list
     nor a dict."""
@@ -205,6 +233,136 @@ def test_conflict_in_dependencies():
     }
     obj = JSONSchemaValidator()
     with pytest.raises(JSONSchemaCompatibilityError):
+        obj.validate(v1, 'first')
+
+
+def test_array_no_items_pass():
+    """Test that having an array without items passes."""
+    v1 = {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+            "$schema": {"type": "string"},
+            "_files": {
+                "type": "array"
+            }
+        }
+    }
+    obj = JSONSchemaValidator()
+    obj.validate(v1, 'first')
+
+
+def test_different_types_inside_enum():
+    """Test that having different types inside enum fails."""
+    v1 = {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+            "resource_type": {
+                "type": "array",
+                "items": {
+                    "enum": [
+                        "Text",
+                        42
+                    ]
+                }
+            }
+        }
+    }
+    obj = JSONSchemaValidator()
+    with pytest.raises(JSONSchemaCompatibilityError):
+        obj.validate(v1, 'first')
+
+
+def test_enum_in_array_items_pass():
+    """Test that having enum in array's items passes."""
+    v1 = {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+            "$schema": {"type": "string"},
+            "resource_type": {
+                "title": "Resource Type",
+                "description": "The type of the resource.",
+                "type": "array",
+                "items": {
+                    "type": "string",
+                    "enum": [
+                        "Text",
+                        "Image",
+                        "Video",
+                        "Audio",
+                        "Time-Series",
+                        "Other"
+                    ]
+                },
+                "uniqueItems": True
+            }
+        },
+        "required": ["community", "title", "open_access"]
+    }
+    obj = JSONSchemaValidator()
+    obj.validate(v1, 'first')
+
+
+def test_different_types_given_and_guessed_enum():
+    """Tets that having type given in schema and different type guessed from
+    enum fails."""
+    v1 = {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+            "resource_type": {
+                "type": "integer",
+                "enum": [
+                    "Text",
+                    "Image"
+                ]
+            }
+        }
+    }
+    obj = JSONSchemaValidator()
+    with pytest.raises(JSONSchemaCompatibilityError):
+        obj.validate(v1, 'first')
+
+
+def test_dict_type_inside_enum():
+    "Test that having a dict inside enum fails."
+    v1 = {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+            "resource_type": {
+                "type": "array",
+                "items": {
+                    "enum": [{
+                        "field_A": {"type": "string"}
+                    }]
+                }
+            }
+        }
+    }
+    obj = JSONSchemaValidator()
+    with pytest.raises(NotImplementedError):
+        obj.validate(v1, 'first')
+
+
+def test_list_type_inside_enum():
+    "Test that having a list inside enum fails."
+    v1 = {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+            "resource_type": {
+                "type": "array",
+                "items": {
+                    "enum": [['abc'], ['bdc']]
+                }
+            }
+        }
+    }
+    obj = JSONSchemaValidator()
+    with pytest.raises(NotImplementedError):
         obj.validate(v1, 'first')
 
 
@@ -448,6 +606,30 @@ def test_null_type_not_implemented():
     obj = JSONSchemaValidator()
     with pytest.raises(NotImplementedError):
         obj.validate(v1, 'first')
+
+
+def test_null_type_repeated_fields():
+    """Test that having already used field using it with type null fails."""
+    v1 = {
+        "type": "object",
+        "properties": {
+            "abc": {
+                "type": "string"
+            }
+        }
+    }
+    v2 = {
+        "type": "object",
+        "properties": {
+            "abc": {
+                "type": "null"
+            }
+        }
+    }
+    obj = JSONSchemaValidator()
+    obj.validate(v1, 'first')
+    with pytest.raises(JSONSchemaCompatibilityError):
+        obj.validate(v2, 'second')
 
 
 def test_not_ignoring_indices_pass():
