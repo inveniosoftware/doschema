@@ -24,7 +24,7 @@ Installation
 Documentation
 -------------
 
-   http://pythonhosted.org/doschema/
+   http://doschema.readthedocs.io/
 
 Happy hacking and thanks for flying DoSchema.
 

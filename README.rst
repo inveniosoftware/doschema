@@ -46,4 +46,4 @@ JSON Schema utility functions and commands.
 *This is an experimental developer preview release.*
 
 * Free software: GPLv2 license
-* Documentation: https://pythonhosted.org/doschema/
+* Documentation: https://doschema.readthedocs.io/
