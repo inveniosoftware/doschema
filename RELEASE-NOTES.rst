@@ -1,8 +1,8 @@
-=================
- DoSchema v0.1.0
-=================
+===================
+ DoSchema v1.0.0a1
+===================
 
-DoSchema v0.1.0 was released on TBD, 2016.
+DoSchema v1.0.0a1 was released on October 12, 2016.
 
 About
 -----
@@ -19,18 +19,18 @@ What's new
 Installation
 ------------
 
-   $ pip install doschema==0.1.0
+   $ pip install doschema==v1.0.0a1
 
 Documentation
 -------------
 
-   http://doschema.readthedocs.io/
+   https://doschema.readthedocs.io/
 
 Happy hacking and thanks for flying DoSchema.
 
 | Invenio Development Team
 |   Email: info@inveniosoftware.org
 |   IRC: #invenio on irc.freenode.net
-|   Twitter: http://twitter.com/inveniosoftware
+|   Twitter: https://twitter.com/inveniosoftware
 |   GitHub: https://github.com/inveniosoftware/doschema
 |   URL: http://inveniosoftware.org
