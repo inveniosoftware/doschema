@@ -318,6 +318,7 @@ class JSONSchemaValidator(object):
         """
         return '/' + '/'.join(path)
 
+
 FieldToAdd = collections.namedtuple(
     'FieldToAdd',
     'schema_index field_tuple field_type'
