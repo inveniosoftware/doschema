@@ -27,7 +27,6 @@
 import copy
 
 import jsonschema
-import six
 
 
 def resolve_references(schema, uri='', ref_resolver=None, in_place=False):
@@ -59,7 +58,7 @@ def _resolve_references_sub(schema, ref_resolver):
     :param ref_resolver: Resolver used to retrieve referenced schemas.
     """
     if isinstance(schema, dict):
-        for key, json_value in six.iteritems(schema):
+        for key, json_value in schema.items():
             if isinstance(json_value, dict):
                 if '$ref' in json_value:
                     ref = json_value.pop('$ref', None)

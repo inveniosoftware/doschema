@@ -29,7 +29,6 @@ import collections
 import logging
 
 import jsonschema
-import six
 
 from doschema.errors import JSONSchemaCompatibilityError
 
@@ -84,7 +83,7 @@ class JSONSchemaValidator(object):
                 self.uri
             )
 
-        for path, field in six.iteritems(self.fields_types_dict):
+        for path, field in self.fields_types_dict.items():
             if field is None:
                 logging.warning(
                     'No type in field ' + self.make_json_pointer(path)
@@ -254,7 +253,7 @@ class JSONSchemaValidator(object):
             path = dependencies.get('$ref')
             dependencies = self.resolver.resolve(path)[1]
 
-        for field_name, field_value in six.iteritems(dependencies):
+        for field_name, field_value in dependencies.items():
             if curr_field + (field_name, ) not in self.fields_types_dict:
                 self.fields_types_dict[
                     curr_field + (field_name, )
