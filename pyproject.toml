@@ -1,0 +1,75 @@
+# SPDX-FileCopyrightText: 2026 TU Wien.
+# SPDX-License-Identifier: MIT
+
+[project]
+name = "doschema"
+description = "JSON Schema utility functions and commands."
+readme = "README.rst"
+license = "GPL-2.0-or-later"
+authors = [
+  { name = "CERN", email = "info@inveniosoftware.org" },
+]
+keywords = [
+  "JSON-Schema",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Web Environment",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+  "chardet>=2.3.0",
+  "click>=5.1",
+  "jsonschema>=2.5.1",
+]
+dynamic = ["version"]
+
+[project.urls]
+Repository = "https://github.com/inveniosoftware/doschema"
+
+[project.scripts]
+doschema = "doschema.cli:cli"
+
+[project.optional-dependencies]
+docs = [
+  "sphinx>=1.4.2",
+]
+tests = [
+  "pytest-pycodestyle>=2.5.0",
+  "check-manifest>=0.25",
+  "coverage>=4.0",
+  "isort>=4.2.2",
+  "pydocstyle>=1.0.0",
+  "pytest-cache>=1.0",
+  "pytest-cov>=1.8.0",
+  "pytest>=2.8.0,<9",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "doschema/version.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/doschema",
+]
+
+[tool.isort]
+profile = "black"
+
+[tool.pydocstyle]
+add_ignore = "D401"
+
+[tool.pytest.ini_options]
+addopts = "--pycodestyle --ignore=docs --cov=doschema --cov-report=term-missing"
+testpaths = "tests doschema"
+live_server_scope = "module"
